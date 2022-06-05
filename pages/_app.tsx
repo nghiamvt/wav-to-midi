@@ -1,5 +1,6 @@
 import '../styles/globals.css';
 
+import Head from 'next/head';
 import { FunctionComponent, PropsWithChildren } from 'react';
 
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
@@ -28,6 +29,9 @@ const theme = createTheme({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SafeHydrate>
+      <Head>
+        <title>Online WAV to MIDI Converter</title>
+      </Head>
       <ThemeProvider theme={theme}>
         <Component {...pageProps} />
       </ThemeProvider>
