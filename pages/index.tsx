@@ -1,11 +1,11 @@
 import { FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
 
 import styled from '@emotion/styled';
+import { Typography } from '@mui/material';
 
 import AudioPlayer, { Widget } from '../components/AudioPlayer';
 import WallPaper from '../components/Wallpaper';
 
-import type { NextPage } from "next"
 type FileRejectionWithPath = FileRejection & {
   file: FileWithPath
 }
@@ -17,7 +17,7 @@ const fileList = (files: FileWithPath[]) =>
     </li>
   ))
 
-const Home: NextPage = () => {
+export default function Home() {
   const {
     getRootProps,
     getInputProps,
@@ -48,7 +48,9 @@ const Home: NextPage = () => {
 
   return (
     <main>
-      <h1>Online WAV to MIDI Converter</h1>
+      <Typography variant="h3" mb={8}>
+        Online WAV to MIDI Converter
+      </Typography>
       <AudioPlayer />
       <DropZoneContainer>
         <div {...getRootProps({ isFocused, isDragAccept, isDragReject })}>
@@ -68,8 +70,6 @@ const Home: NextPage = () => {
     </main>
   )
 }
-
-export default Home
 
 const DropZoneContainer = styled(Widget)(({ theme }) => ({
   margin: 50,
