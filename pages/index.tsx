@@ -1,4 +1,6 @@
-import { FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
+import { useState } from 'react';
+import { DropzoneState, FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
+import { AudioPlayerProvider, useAudioPlayer } from 'react-use-audio-player';
 
 import styled from '@emotion/styled';
 import { Typography } from '@mui/material';
@@ -7,16 +9,16 @@ import AudioPlayer from '../components/AudioPlayer';
 import { Card } from '../components/Card';
 import WallPaper from '../components/Wallpaper';
 
-type FileRejectionWithPath = FileRejection & {
-  file: FileWithPath
-}
+export type FileRejectionWithPath = FileRejection & {
+  file: FileWithPath;
+};
 
 const fileList = (files: FileWithPath[]) =>
   files.map((file) => (
     <li key={file.path}>
       {file.path} - {file.size} bytes
     </li>
-  ))
+  ));
 
 export default function Home() {
   const { getRootProps, getInputProps, acceptedFiles, fileRejections } =
@@ -24,9 +26,9 @@ export default function Home() {
       maxFiles: 1,
       accept: { "audio/x-wav": [".wav"] },
       onDropRejected: (files) => {
-        console.log(files)
+        console.log(files);
       },
-    })
+    });
 
   const fileRejectionItems = fileRejections.map(
     ({ file, errors }: FileRejectionWithPath) => (
@@ -39,27 +41,33 @@ export default function Home() {
         </ul>
       </li>
     )
-  )
+  );
+
+  console.log("home", acceptedFiles);
 
   return (
     <main>
       <Typography variant="h3" mb={8}>
         WAV to MIDI
       </Typography>
-      <AudioPlayer />
+      <AudioPlayerProvider>
+        <AudioPlayer />
+      </AudioPlayerProvider>
       <DropZoneContainer>
         <div {...getRootProps()}>
           <input {...getInputProps()} />
-          <p>{`Drag 'n' drop wav file here, or click to select`}</p>
-          {/* <aside>
-            <h4>Accepted Files</h4>
-            <ul>{fileList(acceptedFiles)}</ul>
-          </aside>*/}
+          {!!acceptedFiles.length ? (
+            <aside>
+              <ul>{fileList(acceptedFiles)}</ul>
+            </aside>
+          ) : (
+            <p>{`Drag 'n' drop wav file here, or click to select`}</p>
+          )}
         </div>
       </DropZoneContainer>
       <WallPaper />
     </main>
-  )
+  );
 }
 
 const DropZoneContainer = styled(Card)({
@@ -69,4 +77,4 @@ const DropZoneContainer = styled(Card)({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
-})
+});
