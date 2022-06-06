@@ -1,4 +1,6 @@
+import { Howl } from 'howler';
 import * as React from 'react';
+import { AudioPlayerControls, useAudioPlayer } from 'react-use-audio-player';
 
 import FastForwardRounded from '@mui/icons-material/FastForwardRounded';
 import FastRewindRounded from '@mui/icons-material/FastRewindRounded';
@@ -16,11 +18,20 @@ import Typography from '@mui/material/Typography';
 import { Card } from './Card';
 
 export default function AudioPlayer() {
+  const audioPlayer = useAudioPlayer({
+    src: "/sample.mp3",
+    autoplay: false,
+    html5: true,
+    format: ["mp3"],
+  })
+
+  const { play, pause, stop, mute, playing, error } = audioPlayer
+
   return (
     <Card>
       <Info />
       <Progress />
-      <Controller />
+      <Controller {...audioPlayer} />
       <Volumne />
     </Card>
   )
@@ -122,8 +133,8 @@ const Progress = () => {
   )
 }
 
-const Controller = () => {
-  const [paused, setPaused] = React.useState(false)
+const Controller = (audioPlayer: Partial<AudioPlayerControls>) => {
+  const { play, pause, stop, mute, playing, error } = audioPlayer
   return (
     <Box
       sx={{
@@ -136,11 +147,11 @@ const Controller = () => {
       <IconButton>
         <FastRewindRounded fontSize="large" htmlColor="#000" />
       </IconButton>
-      <IconButton onClick={() => setPaused(!paused)}>
-        {paused ? (
-          <PlayArrowRounded sx={{ fontSize: "3rem" }} htmlColor="#000" />
-        ) : (
+      <IconButton onClick={() => (playing ? pause() : play())}>
+        {playing ? (
           <PauseRounded sx={{ fontSize: "3rem" }} htmlColor="#000" />
+        ) : (
+          <PlayArrowRounded sx={{ fontSize: "3rem" }} htmlColor="#000" />
         )}
       </IconButton>
       <IconButton>

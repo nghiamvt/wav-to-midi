@@ -2,6 +2,7 @@ import '../styles/globals.css';
 
 import Head from 'next/head';
 import { FunctionComponent, PropsWithChildren } from 'react';
+import { AudioPlayerProvider } from 'react-use-audio-player';
 
 import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 
@@ -33,7 +34,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <title>Online WAV to MIDI Converter</title>
       </Head>
       <ThemeProvider theme={theme}>
-        <Component {...pageProps} />
+        <AudioPlayerProvider>
+          <Component {...pageProps} />
+        </AudioPlayerProvider>
       </ThemeProvider>
       <CssBaseline />
     </SafeHydrate>
