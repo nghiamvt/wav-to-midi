@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { DropzoneState } from 'react-dropzone';
+import { useAudioPlayer, useAudioPosition } from 'react-use-audio-player';
 
 import FastForwardRounded from '@mui/icons-material/FastForwardRounded';
 import FastRewindRounded from '@mui/icons-material/FastRewindRounded';
@@ -15,7 +17,16 @@ import Typography from '@mui/material/Typography';
 
 import { Card } from './Card';
 
-export default function AudioPlayer() {
+export default function AudioPlayer(props: any) {
+  const { file } = props;
+
+  const audioPlayer = useAudioPlayer({
+    src: "/ckgmdt.mp3",
+    autoplay: false,
+    html5: true,
+    format: ["mp3"],
+  });
+
   return (
     <Card>
       <Info />
@@ -23,12 +34,12 @@ export default function AudioPlayer() {
       <Controller />
       <Volumne />
     </Card>
-  )
+  );
 }
 
 const Info = () => {
-  const songName = "Hotel California"
-  const author = "Eagles"
+  const songName = "Hotel California";
+  const author = "Eagles";
   return (
     <Box sx={{ display: "flex", alignItems: "center", width: 350 }}>
       <Box
@@ -55,25 +66,44 @@ const Info = () => {
         </Typography>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 const TinyText = styled(Typography)({
   fontSize: "0.75rem",
   opacity: 0.38,
   fontWeight: 500,
   letterSpacing: 0.2,
-})
+});
 
-function formatDuration(value: number) {
-  const minute = Math.floor(value / 60)
-  const secondLeft = value - minute * 60
-  return `${minute}:${secondLeft < 9 ? `0${secondLeft}` : secondLeft}`
-}
+const formatTime = (seconds: number) => {
+  const floored = Math.floor(seconds);
+  let from = 14;
+  let length = 19;
+
+  //mvtnhan said: 'if second > 3600 and your want to show only MM:SS'
+  if (floored >= 3600) {
+    from = 11;
+    length = 16;
+  }
+
+  return new Date(floored * 1000).toISOString().substring(from, length);
+};
 
 const Progress = () => {
-  const duration = 200 // seconds
-  const [position, setPosition] = React.useState(32)
+  const { duration, position, seek, percentComplete } = useAudioPosition({
+    highRefreshRate: true,
+  });
+  if (duration === Infinity) return null;
+
+  const goToPosition = (event: Event, value: number | number[] | any) => {
+    if (!!value) {
+      const endDistance = duration - value;
+      const newPosition = duration - endDistance;
+      seek(newPosition);
+    }
+  };
+
   return (
     <>
       <Slider
@@ -81,9 +111,9 @@ const Progress = () => {
         size="small"
         value={position}
         min={0}
-        step={1}
+        step={0.01}
         max={duration}
-        onChange={(_, value) => setPosition(value as number)}
+        onChange={goToPosition}
         sx={{
           color: "rgba(0,0,0,0.87)",
           height: 4,
@@ -115,15 +145,16 @@ const Progress = () => {
           mt: -2,
         }}
       >
-        <TinyText>{formatDuration(position)}</TinyText>
-        <TinyText>-{formatDuration(duration - position)}</TinyText>
+        <TinyText>{formatTime(position)}</TinyText>
+        <TinyText>-{formatTime(duration - position)}</TinyText>
       </Box>
     </>
-  )
-}
+  );
+};
 
 const Controller = () => {
-  const [paused, setPaused] = React.useState(false)
+  const { togglePlayPause, playing } = useAudioPlayer();
+
   return (
     <Box
       sx={{
@@ -136,8 +167,8 @@ const Controller = () => {
       <IconButton>
         <FastRewindRounded fontSize="large" htmlColor="#000" />
       </IconButton>
-      <IconButton onClick={() => setPaused(!paused)}>
-        {paused ? (
+      <IconButton onClick={togglePlayPause}>
+        {!playing ? (
           <PlayArrowRounded sx={{ fontSize: "3rem" }} htmlColor="#000" />
         ) : (
           <PauseRounded sx={{ fontSize: "3rem" }} htmlColor="#000" />
@@ -147,10 +178,15 @@ const Controller = () => {
         <FastForwardRounded fontSize="large" htmlColor="#000" />
       </IconButton>
     </Box>
-  )
-}
+  );
+};
 
 const Volumne = () => {
+  const { volume } = useAudioPlayer();
+  const handleChange = (event: Event, newValue: number | number[]) => {
+    volume(newValue);
+  };
+
   return (
     <Stack
       spacing={2}
@@ -161,7 +197,11 @@ const Volumne = () => {
       <VolumeDownRounded htmlColor="rgba(0,0,0,0.4)" />
       <Slider
         aria-label="Volume"
-        defaultValue={30}
+        onChange={handleChange}
+        defaultValue={100}
+        min={0}
+        max={1}
+        step={0.01}
         sx={{
           color: "rgba(0,0,0,0.87)",
           "& .MuiSlider-track": {
@@ -182,5 +222,5 @@ const Volumne = () => {
       />
       <VolumeUpRounded htmlColor="rgba(0,0,0,0.4)" />
     </Stack>
-  )
-}
+  );
+};
