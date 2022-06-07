@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { MouseEvent } from 'react';
 import { FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
 import { AudioPlayerProvider } from 'react-use-audio-player';
 
@@ -42,6 +44,25 @@ function formatBytes(bytes: any, decimals: any) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
 
+const uploadFile = (
+  fileData: string | Blob | MouseEvent<HTMLButtonElement, MouseEvent> | any
+) => {
+  const formData = new FormData();
+  formData.append("file", fileData);
+  axios
+    .post("/api/upload", formData, {
+      headers: {
+        "content-type": "multipart/form-data",
+      },
+    })
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 export default function Home() {
   const { getRootProps, getInputProps, acceptedFiles, fileRejections } =
     useDropzone({
@@ -68,7 +89,11 @@ export default function Home() {
               <p>
                 ☝️ Uploaded: {file.path} {`(${formatBytes(file.size, 2)})`}
               </p>
-              <Button variant="contained" size="large">
+              <Button
+                variant="contained"
+                size="large"
+                onClick={(file) => uploadFile(file)}
+              >
                 <Typography>Convert</Typography>
               </Button>
             </>
