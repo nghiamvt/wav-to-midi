@@ -20,27 +20,38 @@ const fileList = (files: FileWithPath[]) =>
   ));
 
 const getErrMsg = (fileRejections: FileRejectionWithPath[]): string => {
-  if (fileRejections.length === 0) return '';
+  if (fileRejections.length === 0) return "";
   const err = fileRejections[0].errors[0];
 
   return (
     {
-      'file-invalid-type': 'Sorry! Only WAV files are allowed 😔',
+      "file-invalid-type": "Sorry! Only WAV files are allowed 😔",
     }[err.code] || err.message
   );
 };
+
+function formatBytes(bytes: any, decimals: any) {
+  if (bytes === 0) return "0 Bytes";
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
 
 export default function Home() {
   const { getRootProps, getInputProps, acceptedFiles, fileRejections } =
     useDropzone({
       maxFiles: 1,
-      accept: { 'audio/x-wav': ['.wav'] },
+      accept: { "audio/x-wav": [".wav"] },
     });
 
   const errMsg = getErrMsg(fileRejections);
 
   const file: FileWithPath = acceptedFiles[0];
-
   return (
     <main>
       <Typography variant="h3" mb={8}>
@@ -55,7 +66,7 @@ export default function Home() {
           {!!file && (
             <>
               <p>
-                ☝️ Uploaded: {file.path} {`(${file.size} bytes)`}
+                ☝️ Uploaded: {file.path} {`(${formatBytes(file.size, 2)})`}
               </p>
               <Button variant="contained" size="large">
                 <Typography>Convert</Typography>
@@ -75,10 +86,10 @@ export default function Home() {
 
 const DropZoneContainer = styled(Card)({
   margin: 50,
-  width: '700px',
-  height: '300px',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  textAlign: 'center',
+  width: "700px",
+  height: "300px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  textAlign: "center",
 });
