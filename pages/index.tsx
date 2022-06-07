@@ -52,7 +52,6 @@ export default function Home() {
   const errMsg = getErrMsg(fileRejections);
 
   const file: FileWithPath = acceptedFiles[0];
-  console.log(file?.size);
   return (
     <main>
       <Typography variant="h3" mb={8}>
