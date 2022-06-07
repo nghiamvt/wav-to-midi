@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { DropzoneState, FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
-import { AudioPlayerProvider, useAudioPlayer } from 'react-use-audio-player';
+import { FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
+import { AudioPlayerProvider } from 'react-use-audio-player';
 
 import styled from '@emotion/styled';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
 import AudioPlayer from '../components/AudioPlayer';
 import { Card } from '../components/Card';
@@ -40,8 +39,7 @@ export default function Home() {
 
   const errMsg = getErrMsg(fileRejections);
 
-  console.log('acceptedFiles', acceptedFiles);
-  console.log('errMsg', errMsg);
+  const file: FileWithPath = acceptedFiles[0];
 
   return (
     <main>
@@ -49,15 +47,20 @@ export default function Home() {
         WAV to MIDI
       </Typography>
       <AudioPlayerProvider>
-        <AudioPlayer />
+        <AudioPlayer file={acceptedFiles[0]} />
       </AudioPlayerProvider>
       <DropZoneContainer>
         <div {...getRootProps()}>
           <input {...getInputProps()} />
-          {acceptedFiles.length > 0 && (
-            <aside>
-              <ul>{fileList(acceptedFiles)}</ul>
-            </aside>
+          {!!file && (
+            <>
+              <p>
+                ☝️ Uploaded: {file.path} {`(${file.size} bytes)`}
+              </p>
+              <Button variant="contained" size="large">
+                <Typography>Convert</Typography>
+              </Button>
+            </>
           )}
           {acceptedFiles.length === 0 && !errMsg && (
             <p>{`Drag 'n' drop wav file here, or click to select`}</p>
@@ -77,4 +80,5 @@ const DropZoneContainer = styled(Card)({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  textAlign: 'center',
 });

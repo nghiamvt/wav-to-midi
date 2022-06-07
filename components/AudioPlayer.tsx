@@ -18,10 +18,20 @@ import { Card } from './Card';
 
 export default function AudioPlayer(props: any) {
   const { file } = props;
+  const [src, setSrc] = React.useState<FileReader['result']>('');
 
-  const audioPlayer = useAudioPlayer({
-    src: '/sample.wav',
-    autoplay: false,
+  React.useEffect(() => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.addEventListener('load', function () {
+      setSrc(reader.result);
+    });
+    reader.readAsDataURL(file);
+  }, [file]);
+
+  useAudioPlayer({
+    src: file ? src : '/sample.wav',
+    autoplay: !!file,
     html5: true,
     format: ['wav'],
   });
@@ -55,7 +65,7 @@ const Info = () => {
       </Box>
       <Box sx={{ ml: 2, minWidth: 0 }}>
         <Typography variant="caption" color="text.secondary" fontWeight={500}>
-          Jun Pulse
+          Nghia Mai
         </Typography>
         <Typography noWrap>
           <b>{songName}</b>
@@ -100,7 +110,7 @@ const Progress = () => {
         size="small"
         value={position}
         min={0}
-        step={0.05}
+        step={0.01}
         max={duration}
         onChange={(_, value) => seek(value as number)}
         sx={{
@@ -177,9 +187,9 @@ const Volumne = () => {
       <VolumeDownRounded htmlColor="rgba(0,0,0,0.4)" />
       <Slider
         min={0}
-        max={10}
-        step={1}
-        defaultValue={5}
+        max={1}
+        step={0.01}
+        defaultValue={0.5}
         onChange={(_, value) => volume(value)}
         // valueLabelDisplay="auto"
         sx={{
