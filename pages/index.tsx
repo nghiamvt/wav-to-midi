@@ -4,7 +4,6 @@ import { FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
 import { AudioPlayerProvider } from 'react-use-audio-player';
 
 import styled from '@emotion/styled';
-import { Download } from '@mui/icons-material';
 import { Button, Typography } from '@mui/material';
 
 import AudioPlayer from '../components/AudioPlayer';
