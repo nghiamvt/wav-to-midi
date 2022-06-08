@@ -31,6 +31,6 @@ const WallPaper = styled("div")({
       "radial-gradient(at center center, rgb(247, 237, 225) 0%, rgba(247, 237, 225, 0) 70%)",
     transform: "rotate(30deg)",
   },
-})
+});
 
-export default WallPaper
+export default WallPaper;
