@@ -4,7 +4,7 @@ import { FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
 import { AudioPlayerProvider } from 'react-use-audio-player';
 
 import styled from '@emotion/styled';
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import AudioPlayer from '../components/AudioPlayer';
 import { Card } from '../components/Card';
@@ -85,8 +85,8 @@ export default function Home() {
       <AudioPlayerProvider>
         <AudioPlayer file={acceptedFiles[0]} />
       </AudioPlayerProvider>
-      <DropZoneContainer>
-        <div {...getRootProps()}>
+      <Box sx={{ width: { xs: "98%", md: "700px" } }}>
+        <DropZoneContainer {...getRootProps()}>
           <input {...getInputProps()} />
           {!!file && (
             <>
@@ -108,18 +108,19 @@ export default function Home() {
             <p>{`Drag 'n' drop wav file here, or click to select`}</p>
           )}
           {errMsg && <p>{errMsg}</p>}
-        </div>
-      </DropZoneContainer>
+        </DropZoneContainer>
+      </Box>
       <WallPaper />
     </main>
   );
 }
 
 const DropZoneContainer = styled(Card)({
-  margin: 50,
-  width: "700px",
+  margin: "50px 0",
+  width: "100%",
   height: "300px",
   display: "flex",
+  flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
   textAlign: "center",
