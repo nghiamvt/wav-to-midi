@@ -11,7 +11,8 @@ import AudioPlayer from '../components/AudioPlayer';
 import { Card } from '../components/Card';
 import WallPaper from '../components/Wallpaper';
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+axios.defaults.baseURL = baseURL;
 
 export type FileRejectionWithPath = FileRejection & {
   file: FileWithPath;
@@ -44,6 +45,7 @@ export default function Home() {
   const [id, setId] = useState("");
   const [fileName, setFileName] = useState("");
   const [isCoverted, setIsCoverted] = useState(false);
+
   const { getRootProps, getInputProps, acceptedFiles, fileRejections } =
     useDropzone({
       maxFiles: 1,
@@ -58,7 +60,7 @@ export default function Home() {
       noClick: !!id,
     });
 
-  const convertApi = (id: any) => {
+  const convertApi = (id: string) => {
     axios.post("/convert", `file=${id}&from=wav&to=mid`).then((res) => {
       console.log(res.data);
       setIsCoverted(true);
@@ -66,10 +68,10 @@ export default function Home() {
     });
   };
 
-  const Download = (id: any, name: string) => {
+  const Download = (id: string, name: string) => {
     let link = document.createElement("a");
     link.download = name;
-    link.href = `https://softparade.net/download/file?id=${id}`;
+    link.href = `${baseURL}/download/file?id=${id}`;
     link.click();
   };
 
