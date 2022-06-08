@@ -31,7 +31,7 @@ export default function AudioPlayer(props: any) {
 
   useAudioPlayer({
     src: file ? src : "/sample.wav",
-    autoplay: true,
+    autoplay: false,
     html5: true,
     format: ["wav"],
   });

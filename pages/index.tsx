@@ -1,8 +1,10 @@
 import axios from 'axios';
+import { useState } from 'react';
 import { FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
 import { AudioPlayerProvider } from 'react-use-audio-player';
 
 import styled from '@emotion/styled';
+import { Download } from '@mui/icons-material';
 import { Button, Typography } from '@mui/material';
 
 import AudioPlayer from '../components/AudioPlayer';
@@ -39,6 +41,9 @@ function formatBytes(bytes: any, decimals: any) {
 }
 
 export default function Home() {
+  const [id, setId] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [isCoverted, setIsCoverted] = useState(false);
   const { getRootProps, getInputProps, acceptedFiles, fileRejections } =
     useDropzone({
       maxFiles: 1,
@@ -46,11 +51,27 @@ export default function Home() {
       onDropAccepted: async (files: FileWithPath[]) => {
         const formData = new FormData();
         formData.append("file", files[0]);
-        const uploadRes = await axios
+        await axios
           .post("/uploadfile", formData)
-          .then((res) => res.data);
+          .then((res) => setId(res.data.id));
       },
+      noClick: !!id,
     });
+
+  const convertApi = (id: any) => {
+    axios.post("/convert", `file=${id}&from=wav&to=mid`).then((res) => {
+      console.log(res.data);
+      setIsCoverted(true);
+      setFileName(res.data.filename);
+    });
+  };
+
+  const Download = (id: any, name: string) => {
+    let link = document.createElement("a");
+    link.download = name;
+    link.href = `https://softparade.net/download/file?id=${id}`;
+    link.click();
+  };
 
   const errMsg = getErrMsg(fileRejections);
 
@@ -71,8 +92,14 @@ export default function Home() {
               <p>
                 ☝️ Uploaded: {file.path} {`(${formatBytes(file.size, 2)})`}
               </p>
-              <Button variant="contained" size="large">
-                <Typography>Convert</Typography>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() =>
+                  !isCoverted ? convertApi(id) : Download(id, fileName)
+                }
+              >
+                <Typography>{!isCoverted ? "Convert" : "Download"}</Typography>
               </Button>
             </>
           )}
