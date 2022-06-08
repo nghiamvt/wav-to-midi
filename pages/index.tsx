@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
 import { AudioPlayerProvider } from 'react-use-audio-player';
 
@@ -8,16 +9,11 @@ import AudioPlayer from '../components/AudioPlayer';
 import { Card } from '../components/Card';
 import WallPaper from '../components/Wallpaper';
 
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
+
 export type FileRejectionWithPath = FileRejection & {
   file: FileWithPath;
 };
-
-const fileList = (files: FileWithPath[]) =>
-  files.map((file) => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-    </li>
-  ));
 
 const getErrMsg = (fileRejections: FileRejectionWithPath[]): string => {
   if (fileRejections.length === 0) return "";
@@ -47,6 +43,13 @@ export default function Home() {
     useDropzone({
       maxFiles: 1,
       accept: { "audio/x-wav": [".wav"] },
+      onDropAccepted: async (files: FileWithPath[]) => {
+        const formData = new FormData();
+        formData.append("file", files[0]);
+        const uploadRes = await axios
+          .post("/uploadfile", formData)
+          .then((res) => res.data);
+      },
     });
 
   const errMsg = getErrMsg(fileRejections);
