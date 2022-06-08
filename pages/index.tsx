@@ -28,7 +28,7 @@ const getErrMsg = (fileRejections: FileRejectionWithPath[]): string => {
   );
 };
 
-function formatBytes(bytes: any, decimals: any) {
+function formatBytes(bytes: number, decimals: number) {
   if (bytes === 0) return "0 Bytes";
 
   const k = 1024;
