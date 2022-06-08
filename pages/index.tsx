@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useState } from 'react';
 import { FileRejection, FileWithPath, useDropzone } from 'react-dropzone';
 import { AudioPlayerProvider } from 'react-use-audio-player';
 
@@ -9,7 +10,8 @@ import AudioPlayer from '../components/AudioPlayer';
 import { Card } from '../components/Card';
 import WallPaper from '../components/Wallpaper';
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL;
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
+axios.defaults.baseURL = baseURL;
 
 export type FileRejectionWithPath = FileRejection & {
   file: FileWithPath;
@@ -26,7 +28,7 @@ const getErrMsg = (fileRejections: FileRejectionWithPath[]): string => {
   );
 };
 
-function formatBytes(bytes: any, decimals: any) {
+function formatBytes(bytes: number, decimals: number) {
   if (bytes === 0) return "0 Bytes";
 
   const k = 1024;
@@ -39,6 +41,10 @@ function formatBytes(bytes: any, decimals: any) {
 }
 
 export default function Home() {
+  const [id, setId] = useState("");
+  const [fileName, setFileName] = useState("");
+  const [isCoverted, setIsCoverted] = useState(false);
+
   const { getRootProps, getInputProps, acceptedFiles, fileRejections } =
     useDropzone({
       maxFiles: 1,
@@ -46,11 +52,27 @@ export default function Home() {
       onDropAccepted: async (files: FileWithPath[]) => {
         const formData = new FormData();
         formData.append("file", files[0]);
-        const uploadRes = await axios
+        await axios
           .post("/uploadfile", formData)
-          .then((res) => res.data);
+          .then((res) => setId(res.data.id));
       },
+      noClick: !!id,
     });
+
+  const convertApi = (id: string) => {
+    axios.post("/convert", `file=${id}&from=wav&to=mid`).then((res) => {
+      console.log(res.data);
+      setIsCoverted(true);
+      setFileName(res.data.filename);
+    });
+  };
+
+  const Download = (id: string, name: string) => {
+    let link = document.createElement("a");
+    link.download = name;
+    link.href = `${baseURL}/download/file?id=${id}`;
+    link.click();
+  };
 
   const errMsg = getErrMsg(fileRejections);
 
@@ -71,8 +93,14 @@ export default function Home() {
               <p>
                 ☝️ Uploaded: {file.path} {`(${formatBytes(file.size, 2)})`}
               </p>
-              <Button variant="contained" size="large">
-                <Typography>Convert</Typography>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={() =>
+                  !isCoverted ? convertApi(id) : Download(id, fileName)
+                }
+              >
+                <Typography>{!isCoverted ? "Convert" : "Download"}</Typography>
               </Button>
             </>
           )}

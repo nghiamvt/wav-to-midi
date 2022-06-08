@@ -4,8 +4,6 @@ import FormData from 'form-data';
 import { Fields, File, Files, IncomingForm } from 'formidable';
 import fs from 'fs';
 
-import { API_URL } from './';
-
 export const config = {
   api: {
     bodyParser: false,
@@ -50,7 +48,7 @@ export default async function uploadFormFiles(
   formData.append("file", revFile);
 
   return await axios
-    .post(`${API_URL}/uploadfile/`, formData)
+    .post(`${process.env.API_URL}/uploadfile/`, formData)
     .catch((err) => console.log("err", err));
 }
 // return new Promise(async (resolve, reject) => {

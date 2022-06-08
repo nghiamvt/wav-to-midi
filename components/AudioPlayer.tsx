@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 
 import { Card } from './Card';
 
-export default function AudioPlayer(props: any) {
+export default function AudioPlayer(props: { file: File }) {
   const { file } = props;
   const [src, setSrc] = React.useState<FileReader["result"]>("");
 
