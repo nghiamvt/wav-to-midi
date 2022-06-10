@@ -19,12 +19,3 @@ File type: Audio\
 File extension: .mid\
 Developed by: Dave Smith / Chet Wood\
 Initial release: October 1, 1981
-
-### Getting Started
-
-```bash
-yarn install
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
