@@ -85,7 +85,7 @@ export default function Home() {
       <AudioPlayerProvider>
         <AudioPlayer file={acceptedFiles[0]} />
       </AudioPlayerProvider>
-      <Box sx={{ width: { xs: "98%", md: "700px" } }}>
+      <Box sx={{ width: { xs: "98%", sm: "700px" } }}>
         <DropZoneContainer {...getRootProps()}>
           <input {...getInputProps()} />
           {!!file && (

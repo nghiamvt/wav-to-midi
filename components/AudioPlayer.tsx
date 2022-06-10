@@ -51,25 +51,30 @@ const Info = () => {
     <Box sx={{ display: "flex", alignItems: "center", width: 350 }}>
       <Box
         sx={{
-          width: 100,
-          height: 100,
+          width: "100px",
+          height: "100px",
           overflow: "hidden",
-          flexShrink: 0,
           borderRadius: 2,
           backgroundColor: "rgba(0,0,0,0.08)",
+          backgroundSize: "cover",
         }}
       >
-        <img alt="" src="https://source.unsplash.com/random" />
+        <img
+          alt=""
+          src="https://source.unsplash.com/random"
+          height="100%"
+          width="100%"
+        />
       </Box>
       <Box sx={{ ml: 2, minWidth: 0 }}>
         <Typography variant="caption" color="text.secondary" fontWeight={500}>
-          Nghia Mai
+          Team 9
         </Typography>
         <Typography noWrap>
           <b>Project 1</b>
         </Typography>
         <Typography noWrap letterSpacing={-0.25}>
-          Team 9
+          Nghia Mai
         </Typography>
       </Box>
     </Box>
